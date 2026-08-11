@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Owner login | StayFinder{% endblock %}
+{% block content %}
+<section class="owner-auth-section">
+  <div class="owner-auth-card">
+    <a class="auth-brand owner-auth-brand" href="{% url 'home' %}">
+      <span class="logo-dot"></span>StayFinder
+    </a>
+    <p class="auth-kicker">PROPERTY OWNER</p>
+    <h1>Welcome back, owner.</h1>
+    <p class="owner-auth-intro">Log in to manage your properties, room photos, and availability from one place.</p>
+
+    <form method="post" class="owner-auth-form">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <div class="form-errors">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      {% for field in form %}
+        <div class="field-group">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% for error in field.errors %}
+            <small class="field-error">{{ error }}</small>
+          {% endfor %}
+        </div>
+      {% endfor %}
+
+      <button class="auth-submit">Log in to owner portal <span>→</span></button>
+    </form>
+      <p class="auth-forgot"><a href="{% url 'password_reset' %}">Forgot password?</a></p>
+
+    <p class="auth-switch">New owner? <a href="{% url 'owner-signup' %}">Create your account</a></p>
+    <p class="owner-student-link">Looking for a room? <a href="{% url 'signup' %}">Create a student account</a></p>
+  </div>
+</section>
+{% endblock %}

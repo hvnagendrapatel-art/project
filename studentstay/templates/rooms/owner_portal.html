@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}For Property Owners | StayFinder{% endblock %}
+{% block content %}
+<section class="owner-hero">
+  <div>
+    <p class="eyebrow light">PROPERTY OWNER PORTAL</p>
+    <h1>Put your rooms in front of students looking nearby.</h1>
+    <p>Add room details, monthly rent and photos. Publish when available, or take a room off rent whenever it is occupied.</p>
+    {% if user.is_authenticated and user.role == 'owner' %}
+      <a class="banner-button" href="{% url 'room-create' %}">List a room for rent →</a>
+    {% elif user.is_authenticated %}
+      <p class="owner-alert">Your current account is registered as a student. Create a Property Owner account to publish rental listings.</p>
+    {% else %}
+      <div class="owner-actions"><a class="banner-button" href="{% url 'owner-signup' %}">Sign up as an owner →</a><a class="owner-login" href="{% url 'owner-login' %}">Owner log in</a></div>
+    {% endif %}
+  </div>
+  <div class="owner-steps"><div><b>01</b><span>Add room details and rent</span></div><div><b>02</b><span>Upload property photos</span></div><div><b>03</b><span>Publish or take off rent anytime</span></div></div>
+</section>
+{% if user.is_authenticated and user.role == 'owner' %}
+<section class="page-section owner-listings"><div class="section-heading"><div><p class="eyebrow">MANAGE RENTALS</p><h2>Your properties</h2></div><a class="btn btn-solid" href="{% url 'room-create' %}">+ Add room</a></div><div class="owner-list-grid">{% for room in listings %}<article class="owner-list-item">{% with image=room.images.first %}{% if image %}<img class="owner-property-image" src="{{ image.image.url }}" alt="{{ room.title }}">{% else %}<div class="owner-property-image owner-image-empty">🏠</div>{% endif %}{% endwith %}<div class="owner-property-info"><strong>{{ room.title }}</strong><span>₹{{ room.rent }}/month · {% if room.is_available %}On rent{% else %}Off rent{% endif %}</span></div><div class="owner-list-actions"><a href="{% url 'room-update' room.pk %}">{% if room.images.exists %}Manage photos{% else %}Add photos{% endif %}</a><a href="{% url 'room-update' room.pk %}">Edit</a><form method="post" action="{% url 'toggle-rental-status' room.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{% url 'owner-portal' %}"><button>{% if room.is_available %}Take off rent{% else %}Put on rent{% endif %}</button></form></div></article>{% empty %}<p class="empty-state">You have no rooms listed yet. <a href="{% url 'room-create' %}">Add your first rental room.</a></p>{% endfor %}</div></section>
+{% endif %}
+{% endblock %}

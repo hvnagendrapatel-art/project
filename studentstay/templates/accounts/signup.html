@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Create account | StayFinder{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-shell auth-shell-signup">
+        <aside class="auth-aside">
+            <a class="auth-brand" href="{% url 'home' %}"><span class="logo-dot"></span>StayFinder</a>
+            <div>
+                <p class="auth-kicker">START YOUR SEARCH</p>
+                <h1>A better way to find student housing.</h1>
+                <p>Browse trusted listings near campus, save your favourites, and find compatible roommates.</p>
+            </div>
+            <ul class="auth-benefits"><li><span>✓</span> Search rooms by budget and college</li><li><span>✓</span> Save listings for later</li><li><span>✓</span> Find compatible roommates</li></ul>
+        </aside>
+        <div class="auth-card">
+            <p class="auth-kicker">CREATE YOUR ACCOUNT</p>
+            <h2>Join StayFinder</h2>
+            <p class="auth-intro">It only takes a minute to get started.</p>
+            <form method="post" class="auth-form">
+                {% csrf_token %}
+                {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+                <div class="auth-fields">
+                    {% for field in form %}
+                        <div class="field-group {% if field.name == 'college' %}field-wide{% endif %}">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+                            {% if field.help_text and field.name != 'password1' %}<small class="field-help">{{ field.help_text }}</small>{% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="auth-submit">Create account <span>→</span></button>
+            </form>
+            <p class="auth-switch">Already have an account? <a href="{% url 'login' %}">Log in instead</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}

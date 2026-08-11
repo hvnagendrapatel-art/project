@@ -1,0 +1,1 @@
+{% extends "base.html" %}{% block content %}<section class="form-page"><div class="form-card"><h1>Delete “{{ room.title }}”?</h1><p>This cannot be undone.</p><form method="post">{% csrf_token %}<button class="btn btn-solid">Delete listing</button> <a class="btn btn-ghost" href="{{ room.get_absolute_url }}">Cancel</a></form></div></section>{% endblock %}

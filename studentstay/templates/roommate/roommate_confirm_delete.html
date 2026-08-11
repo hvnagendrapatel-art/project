@@ -1,0 +1,2 @@
+{% extends "base.html" %}
+{% block content %}<section class="form-page"><div class="form-card"><h1>Delete this roommate profile?</h1><form method="post">{% csrf_token %}<button class="btn btn-solid">Delete profile</button> <a class="btn btn-ghost" href="{% url 'roommate-detail' roommatepost.pk %}">Cancel</a></form></div></section>{% endblock %}

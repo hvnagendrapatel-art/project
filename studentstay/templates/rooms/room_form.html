@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Edit{% else %}List{% endif %} Property | StayFinder{% endblock %}
+{% block content %}
+<section class="form-page property-form-page">
+  <div class="form-card property-form-card">
+    <p class="eyebrow">PROPERTY OWNER PORTAL</p>
+    <h1>{% if object %}Update your property{% else %}List your property for rent{% endif %}</h1>
+    <p class="form-intro">Add clear details and photos so students can find the right place quickly.</p>
+    <form method="post" enctype="multipart/form-data" class="stack-form property-form">
+      {% csrf_token %}
+      <div class="property-details"><h2>Rental details</h2>{{ form.as_p }}<div id="shared-price-preview" class="shared-price-preview" style="display:none;"></div></div>
+      <div class="photo-upload"><div><h2>Add property photos</h2><p>Upload up to three clear photos. The first image appears on your listing card and the StayFinder homepage.</p></div>{{ formset.management_form }}{% for image_form in formset %}<div class="image-form photo-field">{{ image_form.as_p }}<div class="photo-preview" aria-live="polite">Choose a property image</div></div>{% endfor %}</div>
+      <button class="btn btn-solid">{% if object %}Save changes{% else %}Publish property listing{% endif %} →</button>
+    </form>
+  </div>
+</section>
+<script>
+const roomTypeSelect = document.getElementById('id_room_type');
+const sharedCapacitySelect = document.getElementById('id_shared_room_capacity');
+const sharedPricePreview = document.getElementById('shared-price-preview');
+const sharedFieldWrappers = ['id_shared_room_capacity']
+  .map((fieldId) => document.getElementById(fieldId))
+  .filter(Boolean)
+  .map((field) => field.closest('p'))
+  .filter(Boolean);
+
+function toggleSharedFields() {
+  const isShared = roomTypeSelect && roomTypeSelect.value === 'shared';
+  sharedFieldWrappers.forEach((wrapper) => {
+    wrapper.style.display = isShared ? '' : 'none';
+  });
+  if (!isShared) {
+    sharedPricePreview.style.display = 'none';
+    sharedPricePreview.textContent = '';
+  } else {
+    updateSharedPricePreview();
+  }
+}
+
+function updateSharedPricePreview() {
+  if (!sharedCapacitySelect || !sharedPricePreview) return;
+  const priceMap = {2: '₹2500 per person', 3: '₹1200 per person', 4: '₹1000 per person'};
+  const value = sharedCapacitySelect.value;
+  if (value && priceMap[value]) {
+    sharedPricePreview.textContent = `Selected share count: ${value} people. Price shown: ${priceMap[value]}`;
+    sharedPricePreview.style.display = 'block';
+  } else {
+    sharedPricePreview.textContent = '';
+    sharedPricePreview.style.display = 'none';
+  }
+}
+
+if (roomTypeSelect) {
+  toggleSharedFields();
+  roomTypeSelect.addEventListener('change', toggleSharedFields);
+}
+
+if (sharedCapacitySelect) {
+  sharedCapacitySelect.addEventListener('change', updateSharedPricePreview);
+}
+
+document.querySelectorAll('.photo-field input[type="file"]').forEach((input) => {
+  input.addEventListener('change', () => {
+    const preview = input.closest('.photo-field').querySelector('.photo-preview');
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => { preview.innerHTML = `<img src="${event.target.result}" alt="Property image preview">`; };
+    reader.readAsDataURL(file);
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}StayFinder{% endblock %}
+    </title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}"
+    >
+</head>
+
+<body>
+
+    {% include "includes/navbar.html" %}
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('stayfinder-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            if (theme === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+        })();
+    </script>
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    {% include "includes/footer.html" %}
+
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const updateThemeButton = () => {
+            if (!themeToggle) return;
+            const isDark = document.body.classList.contains('dark-mode');
+            themeToggle.querySelector('.theme-toggle-icon').textContent = isDark ? '☀️' : '🌙';
+            themeToggle.querySelector('.theme-toggle-label').textContent = isDark ? 'Day' : 'Night';
+        };
+
+        const applyTheme = (theme) => {
+            document.body.classList.toggle('dark-mode', theme === 'dark');
+            localStorage.setItem('stayfinder-theme', theme);
+            updateThemeButton();
+        };
+
+        if (themeToggle) {
+            updateThemeButton();
+            themeToggle.addEventListener('click', () => {
+                const nextTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+                applyTheme(nextTheme);
+            });
+        }
+
+        document.querySelectorAll('.nav-links a').forEach((link) => {
+            link.addEventListener('click', (event) => {
+                if (link.href === window.location.href || event.ctrlKey || event.metaKey) return;
+
+                const transitionType = link.dataset.transitionType || 'default';
+                document.body.classList.remove('nav-leaving', 'nav-transition-home', 'nav-transition-rooms', 'nav-transition-roommates', 'nav-transition-owners');
+                document.body.classList.add('nav-leaving', `nav-transition-${transitionType}`);
+            });
+        });
+    </script>
+</body>
+</html>

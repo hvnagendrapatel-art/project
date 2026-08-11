@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Roommate Profile | StayFinder{% endblock %}
+{% block content %}
+<section class="form-page roommate-form-page"><div class="form-card"><p class="eyebrow">ROOMMATE FINDER</p><h1>{% if object %}Update your roommate post{% else %}Find your ideal roommate{% endif %}</h1><p class="form-intro">Share your budget, preferences, and whether you already have a room to make matching easier.</p><form method="post" class="stack-form roommate-form">{% csrf_token %}<div class="roommate-basics"><h2>Your search</h2><p>{{ form.preferred_location.label_tag }}{{ form.preferred_location }}{% for error in form.preferred_location.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</p><p>{{ form.budget.label_tag }}{{ form.budget }}{% for error in form.budget.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</p><p>{{ form.move_in_date.label_tag }}{{ form.move_in_date }}</p><p>{{ form.gender_preference.label_tag }}{{ form.gender_preference }}</p></div><div class="roommate-room-info"><label class="room-checkbox">{{ form.has_room }} <span><strong>I already have a room</strong><small>Turn this on if you want someone to share your current room or flat.</small></span></label><div id="room-details-field"><label for="{{ form.room_details.id_for_label }}">{{ form.room_details.label }}</label>{{ form.room_details }}{% for error in form.room_details.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div></div><p>{{ form.bio.label_tag }}{{ form.bio }}{% for error in form.bio.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</p><p class="availability-toggle">{{ form.is_active }} {{ form.is_active.label_tag }}</p><button class="btn btn-solid">{% if object %}Save changes{% else %}Publish roommate post{% endif %} →</button></form></div></section>
+<script>
+const roomToggle = document.getElementById('{{ form.has_room.id_for_label }}');
+const roomDetails = document.getElementById('room-details-field');
+function updateRoomDetails() { roomDetails.hidden = !roomToggle.checked; }
+roomToggle.addEventListener('change', updateRoomDetails); updateRoomDetails();
+</script>
+{% endblock %}

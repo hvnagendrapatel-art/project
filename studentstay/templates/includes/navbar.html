@@ -1,0 +1,23 @@
+<nav class="navbar">
+    <a class="logo" href="{% url 'home' %}"><span class="logo-dot"></span>StayFinder</a>
+    <div class="nav-links">
+        <a class="{% if request.resolver_match.url_name == 'home' %}is-active{% endif %}" href="{% url 'home' %}" data-transition-type="home">Home</a>
+        <a class="{% if request.resolver_match.url_name == 'room-list' or request.resolver_match.url_name == 'room-detail' %}is-active{% endif %}" href="{% url 'room-list' %}" data-transition-type="rooms">Rooms</a>
+        <a class="{% if 'roommate' in request.resolver_match.url_name %}is-active{% endif %}" href="{% url 'roommate-list' %}" data-transition-type="roommates">Roommates</a>
+        <a class="{% if request.resolver_match.url_name == 'owner-portal' %}is-active{% endif %}" href="{% url 'owner-portal' %}" data-transition-type="owners">For owners</a>
+        {% if user.role == 'owner' %}<a class="{% if request.resolver_match.url_name == 'room-create' %}is-active{% endif %}" href="{% url 'room-create' %}">List property</a>{% endif %}
+    </div>
+    <div class="nav-actions">
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle day and night mode" title="Toggle day and night mode">
+            <span class="theme-toggle-icon">🌙</span>
+            <span class="theme-toggle-label">Night</span>
+        </button>
+        {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="btn btn-ghost">Dashboard</a>
+            <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit" class="btn btn-solid">Logout</button></form>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn btn-ghost">Login</a>
+            <a href="{% url 'signup' %}" class="btn btn-solid">Sign Up</a>
+        {% endif %}
+    </div>
+</nav>
